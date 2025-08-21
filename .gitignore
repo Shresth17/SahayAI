@@ -1,0 +1,25 @@
+# Existing ignores
+/backend/node_modules
+/scripts/__pycache__
+
+# Local env files (do not commit secrets)
+.env
+.env.*
+
+# Node & Python artifacts
+node_modules/
+.venv/
+*.pyc
+__pycache__/
+
+# Editor & OS
+.vscode/
+.DS_Store
+
+# Build / logs
+dist/
+build/
+*.log
+
+# Other
+credentials.json
