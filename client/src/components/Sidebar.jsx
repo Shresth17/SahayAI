@@ -1,12 +1,30 @@
 import { Link, useNavigate } from "react-router-dom";
+import { deleteCookie } from "../utilities/cookie";
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const backendUri = import.meta.env.VITE_BACKEND_URI;
 
   function logout(){
     console.log("Logging out");
-    deleteCookie('token');
-    if(!document.cookie.includes('token')) navigate('/');
+    // Call backend logout endpoint first
+    fetch(`${backendUri}/user/logout`, {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(() => {
+        // Clear the cookie on frontend
+        deleteCookie('token');
+        localStorage.setItem("showLoginToast", "true");
+        // Navigate to landing page
+        navigate('/');
+      })
+      .catch(err => {
+        console.error("Logout error", err);
+        // Even if backend fails, clear frontend cookie and redirect
+        deleteCookie('token');
+        navigate('/');
+      });
   }
 
   return (

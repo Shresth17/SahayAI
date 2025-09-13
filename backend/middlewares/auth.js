@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secretkey = "khushal";
+const secretkey = process.env.JWT_SECRET || 'change_this_in_dev';
 
 function checkLogin(req, res, next) {
     try {
