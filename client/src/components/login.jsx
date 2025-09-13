@@ -1,31 +1,52 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
-
+import { setCookie } from '../utilities/cookie';
 
 export default function LoginForm() {
   const [securityCode, setSecurityCode] = useState("");
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
-  const backendUri = import.meta.env.VITE_BACKEND_URI
+  const backendUri = import.meta.env.VITE_BACKEND_URI;
   async function handleLogin() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const response = await fetch(`${backendUri}/user/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
-    if (response.status === 200) {
-      const data = await response.json();
-      // Cookie is already set by the backend with proper domain handling
-      localStorage.setItem("showLoginToast", "true");
-      navigate("/homepage");
-    } else if (response.status === 404) {
-      setStatus("User not found");
+    
+    try {
+      const response = await fetch(`${backendUri}/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: "include",
+      });
+      
+      if (response.status === 200) {
+        const data = await response.json();
+        
+        // Primary: Backend sets the cookie automatically with credentials: "include"
+        // Fallback: Set cookie on frontend as well to ensure it's available
+        if (data.token) {
+          setCookie('token', data.token, {
+            path: '/',
+            maxAge: 2 * 60 * 60, // 2 hours in seconds
+            secure: window.location.protocol === 'https:', // Secure in production
+            sameSite: 'None' // Required for cross-origin requests
+          });
+        }
+        
+        localStorage.setItem("showLoginToast", "true");
+        navigate("/homepage");
+      } else if (response.status === 404) {
+        setStatus("User not found");
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        setStatus(errorData.message || "Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setStatus("Network error. Please check your connection and try again.");
     }
   }
 
