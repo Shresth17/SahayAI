@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cookieParser());
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],// Allow frontend requests
+    origin: ["http://localhost:5173", "http://localhost:5174", "https://sahay-ai.vercel.app", "https://sahay-ai-dbh3.vercel.app"],// Allow frontend requests
     credentials: true,
     optionsSuccessStatus: 200
 }));

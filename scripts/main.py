@@ -11,7 +11,7 @@ with open("model.pkl", "rb") as model_file:
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Adjust for your React app
+    allow_origins=["http://localhost:5173", "https://sahay-ai-dbh3.vercel.app","https://sahay-ai.vercel.app"],  # Adjust for your React app
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
