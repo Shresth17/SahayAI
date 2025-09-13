@@ -23,9 +23,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Sidebar({ setActivePage }) {
   const navigate = useNavigate();
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   function logout() {
-    fetch("http://localhost:5000/user/logout", {
+    fetch(`${backendUri}/user/logout`, {
       method: "GET",
       credentials: "include",
     })

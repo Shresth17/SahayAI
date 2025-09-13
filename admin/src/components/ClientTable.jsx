@@ -9,6 +9,7 @@ const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const ClientTable = () => {
     const navigate = useNavigate();
+    const backendUri = import.meta.env.VITE_BACKEND_URI;
     const [loadingGrievance, setLoadingGrievance] = useState(null);
     const [grievances, setGrievances] = useState([]);
     const [filteredGrievances, setFilteredGrievances] = useState([]);
@@ -20,7 +21,7 @@ const ClientTable = () => {
     useEffect(() => {
         const fetchGrievances = async () => {
             try {
-                const response = await fetch("http://localhost:5000/grievance/allGrievances", {
+                const response = await fetch(`${backendUri}/grievance/allGrievances`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
@@ -66,7 +67,7 @@ const ClientTable = () => {
       useEffect(() => {
         const fetchGrievances = async () => {
           try {
-            const response = await fetch("http://localhost:5000/grievance/allGrievances", {
+            const response = await fetch(`${backendUri}/grievance/allGrievances`, {
               method: "GET",
               headers: { "Content-Type": "application/json" },
               credentials: "include",

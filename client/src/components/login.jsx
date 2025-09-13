@@ -7,11 +7,11 @@ export default function LoginForm() {
   const [securityCode, setSecurityCode] = useState("");
   const navigate = useNavigate();
   const [status, setStatus] = useState(null);
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   async function handleLogin() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const response = await fetch("http://localhost:5000/user/login", {
+    const response = await fetch(`${backendUri}/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -21,8 +21,7 @@ export default function LoginForm() {
     });
     if (response.status === 200) {
       const data = await response.json();
-      const token = data.token;
-      document.cookie = `token=${token}; Secure; SameSite=None; Domain=localhost;`;
+      // Cookie is already set by the backend with proper domain handling
       localStorage.setItem("showLoginToast", "true");
       navigate("/homepage");
     } else if (response.status === 404) {

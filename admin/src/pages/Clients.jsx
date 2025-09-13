@@ -5,11 +5,12 @@ import ClientTable from "../components/ClientTable";
 
 const Clients = () => {
   const [grievances, setGrievances] = useState([]);
+  const backendUri = import.meta.env.VITE_BACKEND_URI;
 
   useEffect(() => {
     const fetchGrievances = async () => {
       try {
-        const response = await fetch("http://localhost:5000/grievance/allGrievances", {
+        const response = await fetch(`${backendUri}/grievance/allGrievances`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           credentials: "include",

@@ -24,7 +24,7 @@ function App() {
         <Router>
             <Routes>
                 {/* Set default route to Clients instead of Login */}
-                <Route path="/" element={<Navigate to="/clients" />} />
+                <Route path="/" element={<Navigate to="/login" />} />
 
                 {/* Login Page */}
                 <Route path="/login" element={<Login />} />

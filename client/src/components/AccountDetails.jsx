@@ -5,14 +5,14 @@ import { getCookie } from "../utilities/cookie";
 const AccountDetails = () => {
   const [user, setUser] = useState(null);
   const [activeTab, setActiveTab] = useState("personal");
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   useEffect(() => {
     const token = getCookie('token');
     console.log("Token: ");
 
     if (token) {
       console.log("Fetching user data...");
-      fetch(`http://localhost:5000/user/token/${token}`)
+      fetch(`${backendUri}/user/token/${token}`)
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch user data");
           return res.json();

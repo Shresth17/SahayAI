@@ -11,7 +11,7 @@ const GrievanceForm = () => {
   const [remarks, setRemarks] = useState("");
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   const handleFileChange = (e) => {
     setFile(e.target.files[0]); // Store selected file
   };
@@ -21,7 +21,7 @@ const GrievanceForm = () => {
 
     try {
       // Step 1: Check if the description is spam
-      const spamResponse = await fetch("http://localhost:8000/predict", {
+      const spamResponse = await fetch("https://sahayai.onrender.com/predict", {
         method: "POST",
         body: JSON.stringify({ description }),
         headers: {
@@ -39,7 +39,7 @@ const GrievanceForm = () => {
       }
 
       // Step 2: If not spam, submit the grievance
-      const response = await fetch("http://localhost:5000/grievance", {
+      const response = await fetch(`${backendUri}/grievance`, {
         method: "POST",
         body: JSON.stringify({
           department,

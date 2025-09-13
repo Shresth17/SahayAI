@@ -47,7 +47,7 @@ const SignupForm = () => {
     "Delhi": ["choose","New Delhi", "Connaught Place", "Chandni Chowk", "Saket", "Karol Bagh", "Rohini", "Dwarka", "Lajpat Nagar", "Hauz Khas", "Janakpuri"]
   };
   
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   const States = Object.keys(stateLists);
   const [selectedState, setSelectedState] = useState(States[0]);
   const [list, setList] = useState(stateLists[selectedState]);
@@ -68,7 +68,7 @@ const SignupForm = () => {
 
   async function handleSignup() {
     console.log(formData);
-    const response = await fetch("http://localhost:5000/user/signup", {
+    const response = await fetch(`${backendUri}/user/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

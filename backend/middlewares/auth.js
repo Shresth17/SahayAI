@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const secretkey = "sarthak";
+const secretkey = "khushal";
 
 function checkLogin(req, res, next) {
     try {

@@ -4,13 +4,13 @@ export default function Status() {
   const [grievanceCode, setGrievanceCode] = useState("");
   const [grievance, setGrievance] = useState(null);
   const [error, setError] = useState(null);
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5000/grievance/grievanceCode/${grievanceCode}`);
+      const response = await fetch(`${backendUri}/grievance/grievanceCode/${grievanceCode}`);
       
       if (!response.ok) {
         throw new Error("Grievance not found");

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const ProfilePage = ({ setActivePage, showToast }) => {
   const navigate = useNavigate(); // ✅ Move useNavigate outside the function
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   async function handleSaveProfile(event) {
     event.preventDefault(); // Prevents form submission from refreshing the page
     console.log("Saving profile...");
@@ -17,7 +17,7 @@ const ProfilePage = ({ setActivePage, showToast }) => {
     const address = document.getElementById("address").value;
     const mobile = document.getElementById("mobile").value;
 
-    const response = await fetch("http://localhost:5000/user/profileUpdate", {
+    const response = await fetch(`${backendUri}/user/profileUpdate`, {
         method: "PUT",
         credentials: "include",
         headers: {

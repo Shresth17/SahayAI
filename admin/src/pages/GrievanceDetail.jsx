@@ -13,11 +13,12 @@ function GrievanceDetail() {
     const [showPopup, setShowPopup] = useState(false); // Popup visibility
     const [showConfetti, setShowConfetti] = useState(false); // Confetti effect
     const navigate = useNavigate();
+    const backendUri = import.meta.env.VITE_BACKEND_URI;
 
     useEffect(() => {
         const fetchGrievance = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/grievance/grievanceCode/${grievanceCode}`, {
+                const response = await fetch(`${backendUri}/grievance/grievanceCode/${grievanceCode}`, {
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                     credentials: "include",
@@ -83,7 +84,7 @@ function GrievanceDetail() {
 
     const showFile = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/download/${grievance.fileName}`, {
+            const response = await fetch(`${backendUri}/download/${grievance.fileName}`, {
                 method: "GET",
             });
     
@@ -105,7 +106,7 @@ function GrievanceDetail() {
         setCurrentStatus("Resolution Provided");
         console.log("currentStage", currentStage);
         try {
-            const response = await fetch(`http://localhost:5000/grievance/grievanceCode/${grievanceCode}`, {
+            const response = await fetch(`${backendUri}/grievance/grievanceCode/${grievanceCode}`, {
                 method: "PUT",
                 credentials: "include",
                 headers: {
@@ -137,7 +138,7 @@ function GrievanceDetail() {
 
     const handleStageClick = async(stage) => {
         setCurrentStage(stage);
-        const response = await fetch(`http://localhost:5000/grievance/grievanceCode/${grievanceCode}`, {
+        const response = await fetch(`${backendUri}/grievance/grievanceCode/${grievanceCode}`, {
             method: "PUT",
             credentials: "include",
             headers: {

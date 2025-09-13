@@ -22,12 +22,13 @@ const AdminDashboard = () => {
   const [pendingGrievances, setPendingGrievances] = useState(0);
   const [closedGrievances, setClosedGrievances] = useState(0);
   const [spam, setSpam] = useState(0);
+  const backendUri = import.meta.env.VITE_BACKEND_URI;
   const colors = ["#6366F1", "#10B981", "#F59E0B", "#EF4444", "#6B7280", "#D946EF"];
 
   useEffect(() => {
     const fetchGrievances = async () => {
       try {
-        const response = await fetch("http://localhost:5000/grievance/allGrievances", {
+        const response = await fetch(`${backendUri}/grievance/allGrievances`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           credentials: "include",

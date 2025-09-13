@@ -3,7 +3,7 @@ import { Home, BarChart3 } from "lucide-react"; // Importing Lucide icons
 
 const Sidebar = () => {
   const menuItems = [
-    { name: "My Clients", path: "/", icon: <Home size={20} /> },
+    { name: "My Clients", path: "/clients", icon: <Home size={20} /> },
     { name: "Insights", path: "/quotes", icon: <BarChart3 size={20} /> },
     // { name: "Billing", path: "/billing", icon: <CreditCard size={20} /> },
   ];
@@ -32,9 +32,9 @@ const Sidebar = () => {
 
       {/* Logout Button */}
       <div className="p-4 border-t border-green-600">
-        <button className="w-full cursor-pointer py-2 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition-all">
+        <Link to={"/login"} className="w-full cursor-pointer py-2 px-4 bg-red-600 hover:bg-red-700 rounded-lg text-white font-semibold transition-all">
           Logout
-        </button>
+        </Link>
       </div>
     </div>
   );

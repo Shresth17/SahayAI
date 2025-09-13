@@ -11,7 +11,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (!email || !password || !department) {
+    if (!email || !password) {
       alert("Please fill in all fields.");
       return;
     }
@@ -64,7 +64,7 @@ const Login = () => {
           </div>
 
           {/* Department Dropdown */}
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <label className="block text-gray-700 font-medium mb-2">Select Department</label>
             <select
               value={department}
@@ -86,7 +86,7 @@ const Login = () => {
               <option value="housing_urban">Housing and Urban Affairs</option>
               <option value="health_welfare">Health & Family Welfare</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <button

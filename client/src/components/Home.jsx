@@ -13,7 +13,7 @@ export default function Home() {
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentEntries = grievances.slice(indexOfFirstEntry, indexOfLastEntry);
-
+  const backendUri = import.meta.env.VITE_BACKEND_URI
   // Handle next and previous page actions
   const nextPage = () => {
     if (currentPage < Math.ceil(grievances.length / entriesPerPage)) {
@@ -57,7 +57,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchGrievances = async () => {
-      const response = await fetch("http://localhost:5000/grievance", {
+      const response = await fetch(`${backendUri}/grievance`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
