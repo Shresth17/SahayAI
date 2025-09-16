@@ -68,6 +68,10 @@ const SignupForm = () => {
 
   async function handleSignup() {
     console.log(formData);
+    if(!formData.name || !formData.password || !formData.gender || !formData.pincode || !formData.address || !formData.state || !formData.city || !formData.phone || !formData.email){
+      alert('Please fill in all fields');
+      return;
+    }
     const response = await fetch(`${backendUri}/user/signup`, {
       method: "POST",
       headers: {
@@ -133,6 +137,7 @@ const SignupForm = () => {
               value={gender} 
               onChange={handleChange} 
               className="text-indigo-500 focus:ring-indigo-400" 
+              required
             />
             <span>{gender}</span>
           </label>

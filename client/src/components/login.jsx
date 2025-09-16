@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import { setCookie } from '../utilities/cookie';
 
@@ -103,12 +103,12 @@ export default function LoginForm() {
 
         {/* Links */}
         <div className="text-center mt-4 text-sm text-gray-600">
-          <a href="#" className="hover:text-indigo-700 transition">Forgot Password</a> | 
-          <a href="#" className="hover:text-indigo-700 ml-2 transition">Forgot Username</a>
+          <Link to="#" className="hover:text-indigo-700 transition">Forgot Password</Link> | 
+          <Link to="#" className="hover:text-indigo-700 ml-2 transition">Forgot Username</Link>
           <br />
-          <a href="/signup" className="hover:text-indigo-700 font-medium transition">
+          <Link to={"/signup"} className="hover:text-indigo-700 font-medium transition">
             Click here to Sign Up
-          </a>
+          </Link>
         </div>
       </div>
     </div>

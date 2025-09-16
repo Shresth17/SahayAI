@@ -4,11 +4,12 @@ import React, { useState } from "react";
 const AIAnalyzer = () => {
     const [pdfFile, setPdfFile] = useState(null);
     const [isInitialized, setIsInitialized] = useState(false);
+    const [sessionId, setSessionId] = useState(null);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const API_BASE_URL = "http://127.0.0.1:8001";  // Update this if deployed
+    const API_BASE_URL = import.meta.env.VITE_PYTHON_URL;  // Updated to match main.py port
 
     /** 📌 Handle PDF Upload */
     const handleFileChange = (event) => {
@@ -39,8 +40,9 @@ const AIAnalyzer = () => {
 
             if (response.ok) {
                 setIsInitialized(true);
+                setSessionId(result.session_id);
             } else {
-                alert(result.message);
+                alert(result.message || result.detail);
             }
         } catch (error) {
             console.error("Initialization Error:", error);
@@ -52,7 +54,7 @@ const AIAnalyzer = () => {
 
     /** 📌 Ask a Question */
 const askQuestion = async () => {
-  if (!isInitialized) {
+  if (!isInitialized || !sessionId) {
       alert("Initialize the AI first!");
       return;
   }
@@ -68,7 +70,10 @@ const askQuestion = async () => {
           headers: {
               "Content-Type": "application/json", // ✅ Ensure JSON is sent
           },
-          body: JSON.stringify({ query: question }), // ✅ Send a proper JSON object
+          body: JSON.stringify({ 
+              query: question,
+              session_id: sessionId
+          }), // ✅ Send query and session_id
       });
 
       const result = await response.json();

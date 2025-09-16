@@ -120,7 +120,7 @@ function GrievanceDetail() {
             if (response.ok) {
                 alert("✅ AI Assistance flag updated successfully!");
                 setTimeout(() => {
-                    navigate("/");
+                    navigate("/clients");
                 }, 1000);
 
             } else {
@@ -161,7 +161,7 @@ function GrievanceDetail() {
             }, 3000);
         }
         setTimeout(() => {
-            navigate("/");
+            navigate("/clients");
         }, 4000);
 
 

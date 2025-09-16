@@ -11,7 +11,8 @@ const GrievanceForm = () => {
   const [remarks, setRemarks] = useState("");
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
-  const backendUri = import.meta.env.VITE_BACKEND_URI
+  const backendUri = import.meta.env.VITE_BACKEND_URI;
+  const aiServiceUrl = import.meta.env.VITE_AI_SERVICE_URL;
   const handleFileChange = (e) => {
     setFile(e.target.files[0]); // Store selected file
   };
@@ -20,8 +21,8 @@ const GrievanceForm = () => {
     e.preventDefault();
 
     try {
-      // Step 1: Check if the description is spam
-      const spamResponse = await fetch("https://sahayai.onrender.com/predict", {
+      // Step 1: Check if the description is spam using local AI service
+      const spamResponse = await fetch(`${aiServiceUrl}/predict`, {
         method: "POST",
         body: JSON.stringify({ description }),
         headers: {

@@ -7,66 +7,100 @@ const { checkLogin } = require('../middlewares/auth');
 
 
 
-router.post('/signup', async (req, res)=>{
-    const hashPassword = bcrypt.hashSync(req.body.password, 10);
-    const user = await User.create
-       ({ name: req.body.name,
-        email: req.body.email,
-        password: hashPassword,
-        gender: req.body.gender,
-        phone: req.body.phone,
-        address: req.body.address,
-        city: req.body.city,
-        state: req.body.state,
-        pincode: req.body.pincode
-    });
-        // console.log(user);
-
-        user.save().then((data)=>{
-           return res.status(200).json(data);
-        }).catch((error)=>{
-           return res.status(400).json(error);
+router.post('/signup', async (req, res) => {
+    try {
+        const hashPassword = bcrypt.hashSync(req.body.password, 10);
+        const user = await User.create({
+            name: req.body.name,
+            email: req.body.email,
+            password: hashPassword,
+            gender: req.body.gender,
+            phone: req.body.phone,
+            address: req.body.address,
+            city: req.body.city,
+            state: req.body.state,
+            pincode: req.body.pincode
         });
-})
 
-router.post('/login', async (req, res)=>{
-    const email = req.body.email;
-    const user = await User.findOne({email});
-    if(!user){
-        return res.status(404).json({message: "User not found"});
+        const savedUser = await user.save();
+        return res.status(200).json(savedUser);
+    } catch (error) {
+        console.error("Signup error:", error);
+        return res.status(500).json({ 
+            message: "Internal server error during signup", 
+            error: error.message 
+        });
     }
-    const validPassword = bcrypt.compareSync(req.body.password, user.password);
-    if(!validPassword){
-        return res.json({message: "Invalid Password"});
+})
+
+router.post('/login', async (req, res) => {
+    try {
+        const email = req.body.email;
+        const user = await User.findOne({email});
+        
+        if (!user) {
+            return res.status(404).json({message: "User not found"});
+        }
+        
+        const validPassword = bcrypt.compareSync(req.body.password, user.password);
+        if (!validPassword) {
+            return res.status(401).json({message: "Invalid Password"});
+        }
+        
+        const token = setUser(user);
+        res.cookie("token", token, {
+            httpOnly: false, // Prevents frontend JavaScript access
+            secure: true,  // Must be true in production (HTTPS)
+            sameSite: "None", // Required for cross-origin requests
+            path: "/", // Ensure it's accessible site-wide
+            maxAge: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
+        });
+        
+        return res.status(200).json({token});
+    } catch (error) {
+        console.error("Login error:", error);
+        return res.status(500).json({ 
+            message: "Internal server error during login", 
+            error: error.message 
+        });
     }
-    const token =  setUser(user);
-    res.cookie("token", token, {
-        httpOnly: false, // Prevents frontend JavaScript access
-        secure: true,  // Must be true in production (HTTPS)
-        sameSite: "None", // Required for cross-origin requests
-        path: "/", // Ensure it's accessible site-wide
-        maxAge: 2 * 60 * 60 * 1000, // 2 hours in milliseconds
-    });
-    
-    
-    return res.status(200).json({token});
 })
 
-router.get('/token/:token', async (req, res)=>{
-    const token = req.params.token;
-    const user = getUser(token);
-    // console.log(user.user);
-    return res.json(user.user);
+router.get('/token/:token', async (req, res) => {
+    try {
+        const token = req.params.token;
+        const user = getUser(token);
+        
+        if (!user) {
+            return res.status(401).json({ message: "Invalid or expired token" });
+        }
+        
+        return res.status(200).json(user.user);
+    } catch (error) {
+        console.error("Token verification error:", error);
+        return res.status(500).json({ 
+            message: "Internal server error during token verification", 
+            error: error.message 
+        });
+    }
 })
 
-router.get("/logout", async (req, res)=>{
-    res.clearCookie("token", {
-        httpOnly: true, // Ensure this matches your original cookie settings
-        secure: true,
-        sameSite: "None",
-        path: "/"
-    });
-    res.status(200).json({ message: "Logged out successfully" });
+router.get("/logout", async (req, res) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true, // Ensure this matches your original cookie settings
+            secure: true,
+            sameSite: "None",
+            path: "/"
+        });
+        return res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.error("Logout error:", error);
+        return res.status(500).json({ 
+            message: "Internal server error during logout", 
+            error: error.message 
+        });
+    }
 })
 
 router.put("/profileUpdate", checkLogin, async (req, res) => {
@@ -110,18 +144,35 @@ router.put("/profileUpdate", checkLogin, async (req, res) => {
 
 
 
-router.get("/username", checkLogin, async (req, res)=>{
-    const user = req.user.user;
-    // console.log("hi"+user);
-    if(!user){
-        return res.json({message: "User not found"});
+router.get("/username", checkLogin, async (req, res) => {
+    try {
+        const user = req.user.user;
+        
+        if (!user) {
+            return res.status(404).json({message: "User not found"});
+        }
+        
+        return res.status(200).json(user);
+    } catch (error) {
+        console.error("Username fetch error:", error);
+        return res.status(500).json({ 
+            message: "Internal server error while fetching username", 
+            error: error.message 
+        });
     }
-    return res.json(user);
 })
 
-router.get('/allusers/contact', async (req, res)=>{
-    const users = await User.find({});
-    return res.json(users);
+router.get('/allusers/contact', async (req, res) => {
+    try {
+        const users = await User.find({});
+        return res.status(200).json(users);
+    } catch (error) {
+        console.error("Fetch all users error:", error);
+        return res.status(500).json({ 
+            message: "Internal server error while fetching users", 
+            error: error.message 
+        });
+    }
 })
 
 module.exports = router;
