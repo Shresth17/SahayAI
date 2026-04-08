@@ -1,6 +1,7 @@
 const express = require("express");
 const Grievance = require("../models/grievance");
 const { checkLogin } = require("../middlewares/auth");
+const { cacheMiddleware } = require("../redisClient");
 
 const router = express.Router();
 
@@ -83,7 +84,7 @@ router.put("/grievanceCode/:grievanceCode", async (req, res) => {
 
 
 
-router.get("/allGrievances", async (req, res) => {
+router.get("/allGrievances", cacheMiddleware("global_grievances", 300), async (req, res) => {
     // console.log("hi");
     try {
         // const useremail = req.user.user.email;
