@@ -25,13 +25,9 @@ const GrievanceForm = () => {
       const spamResponse = await fetch(`${aiServiceUrl}/predict`, {
         method: "POST",
         body: JSON.stringify({ description }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
-
       const spamResult = await spamResponse.json();
-
       if (spamResult.spam) {
         toast.error("Spam detected! Cannot submit grievance.", {
           style: { backgroundColor: "#ff4d4d", color: "white" },
@@ -39,7 +35,25 @@ const GrievanceForm = () => {
         return;
       }
 
-      // Step 2: If not spam, submit the grievance
+      // Step 2: Upload file to GridFS first (if a file was selected)
+      let uploadedFileName = null;
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const uploadResponse = await fetch(`${backendUri}/upload`, {
+          method: "POST",
+          body: formData,
+        });
+        if (uploadResponse.ok) {
+          const uploadData = await uploadResponse.json();
+          uploadedFileName = uploadData.filename;
+        } else {
+          toast.error("File upload failed. Please try again.");
+          return;
+        }
+      }
+
+      // Step 3: Submit grievance with the stored filename
       const response = await fetch(`${backendUri}/grievance`, {
         method: "POST",
         body: JSON.stringify({
@@ -48,19 +62,15 @@ const GrievanceForm = () => {
           subcategory,
           description,
           remarks,
-          file,
+          fileName: uploadedFileName,
         }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
 
       if (response.status === 201) {
         toast.success("Grievance submitted successfully!");
-        setTimeout(() => {
-          navigate("/homepage");
-      }, 1000);
+        setTimeout(() => { navigate("/homepage"); }, 1000);
       } else {
         toast.error("Failed to submit grievance");
       }

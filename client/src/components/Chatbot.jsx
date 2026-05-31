@@ -105,7 +105,7 @@ const Chatbot = () => {
     setLoading(true);
     try {
       const response = await axios({
-        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        url: `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-3.1-flash-lite"}:generateContent?key=${GEMINI_API_KEY}`,
         method: "POST",
         headers: {
           "Content-Type": "application/json",

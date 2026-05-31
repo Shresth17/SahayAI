@@ -9,6 +9,7 @@
 # Node & Python artifacts
 node_modules/
 .venv/
+venv/
 *.pyc
 __pycache__/
 

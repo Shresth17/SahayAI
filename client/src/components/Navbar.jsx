@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 const Navbar = () => {
   const [active, setActive] = useState("Home");
   const navigate = useNavigate();
+  const adminUrl = import.meta.env.VITE_ADMIN_URL || "http://localhost:5174";
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -49,12 +50,20 @@ const Navbar = () => {
         </ul>
       </nav>
 
-      <button
-        className="bg-orange-500 px-6 py-3 rounded-md hover:bg-orange-600 transition"
-        onClick={() => navigate("/login")}
-      >
-        Login
-      </button>
+      <div className="flex gap-3">
+        <button
+          className="bg-yellow-400 text-gray-900 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-all duration-200 shadow-md border-2 border-yellow-500 hover:scale-105"
+          onClick={() => window.open(`${adminUrl}/login`, "_blank")}
+        >
+          Admin Login
+        </button>
+        <button
+          className="bg-yellow-400 text-gray-900 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-all duration-200 shadow-md border-2 border-yellow-500 hover:scale-105"
+          onClick={() => navigate("/login")}
+        >
+          User Login
+        </button>
+      </div>
     </header>
   );
 };

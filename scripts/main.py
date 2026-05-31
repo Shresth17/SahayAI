@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from fastapi import FastAPI, UploadFile, File, HTTPException
 import pickle
 from pydantic import BaseModel
@@ -47,14 +48,34 @@ class QuestionRequest(BaseModel):
     query: str
     session_id: str
 
+SPAM_KEYWORDS = [
+    "free", "lottery", "winner", "click here", "buy now",
+    "subscribe", "offer", "discount", "prize", "congratulations",
+     "jackpot", "earn money", "act now", "limited time",
+]
+
 @app.post("/predict")
 async def predict(request: GrievanceRequest):
+    import traceback
     description = request.description
+    try:
+        # Keyword-based spam check
+        desc_lower = description.lower()
+        for keyword in SPAM_KEYWORDS:
+            if keyword in desc_lower:
+                print(f"SPAM (keyword: '{keyword}'): {description[:80]}", flush=True)
+                return {"spam": True}
 
-    # Predict whether the grievance is spam (assuming model expects a list of text inputs)
-    prediction = model.predict([description])[0]  # 1 means spam, 0 means not spam
+        # ML model check
+        proba = model.predict_proba([description])[0]
+        spam_confidence = float(proba[1])
+        is_spam = spam_confidence >= 0.8
+        print(f"Spam confidence: {spam_confidence:.2f} -> {'SPAM' if is_spam else 'LEGIT'}", flush=True)
+        return {"spam": is_spam}
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
-    return {"spam": bool(prediction)}
 
 @app.post("/init_rag")
 async def init_rag(pdf_files: UploadFile = File(...)):
@@ -108,7 +129,7 @@ async def ask_question(request: QuestionRequest):
     
     try:
         # Initialize Gemini model
-        model_ai = genai.GenerativeModel('gemini-1.5-flash')
+        model_ai = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite"))
         
         # Create prompt with PDF content and user question
         prompt = f"""

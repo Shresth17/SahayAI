@@ -41,26 +41,39 @@ const ClientTable = () => {
     }, []);
 
     
-    const fetchAISolution = async (description) => {
-        try {
-          const response = await axios({
-            url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            data: {
-              contents: [
-                {
-                  parts: [{ text: `Analyze the problem and provide a detailed solution with highlighted points regarding how to solve the problem from the perspective of a Government officer: ${description}` }],
-                },
-              ],
-            },
-          });
-          return response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "Error generating AI solution";
-        } catch (error) {
-          console.error("Error fetching AI solution:", error);
-          return "Error generating AI solution";
+    const fetchAISolution = async (description, retries = 3) => {
+        const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+        for (let attempt = 1; attempt <= retries; attempt++) {
+          try {
+            const response = await axios({
+              url: `https://generativelanguage.googleapis.com/v1beta/models/${import.meta.env.VITE_GEMINI_MODEL || "gemini-3.1-flash-lite"}:generateContent?key=${GEMINI_API_KEY}`,
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              data: {
+                contents: [
+                  {
+                    parts: [{ text: `Analyze the problem and provide a detailed solution with highlighted points regarding how to solve the problem from the perspective of a Government officer: ${description}` }],
+                  },
+                ],
+              },
+            });
+            return response.data?.candidates?.[0]?.content?.parts?.[0]?.text || "No solution generated.";
+          } catch (error) {
+            const status = error?.response?.status;
+            const isRateLimit = status === 429;
+            const isServerError = status >= 500;
+            if ((isRateLimit || isServerError) && attempt < retries) {
+              const waitMs = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+              console.warn(`Gemini API attempt ${attempt} failed (${status}). Retrying in ${waitMs / 1000}s...`);
+              await delay(waitMs);
+            } else {
+              const msg = isRateLimit
+                ? "AI solution unavailable: Please try again later."
+                : `AI solution unavailable: ${error?.response?.data?.error?.message || error.message}`;
+              console.error("Error fetching AI solution:", error);
+              return msg;
+            }
+          }
         }
       };
 
