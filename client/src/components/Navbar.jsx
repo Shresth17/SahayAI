@@ -51,12 +51,14 @@ const Navbar = () => {
       </nav>
 
       <div className="flex gap-3">
-        <button
-          className="bg-yellow-400 text-gray-900 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-all duration-200 shadow-md border-2 border-yellow-500 hover:scale-105"
-          onClick={() => window.open(`${adminUrl}/login`, "_blank")}
+        <a
+          href={`${adminUrl}/login`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-yellow-400 text-gray-900 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-all duration-200 shadow-md border-2 border-yellow-500 hover:scale-105 no-underline"
         >
           Admin Login
-        </button>
+        </a>
         <button
           className="bg-yellow-400 text-gray-900 font-bold px-5 py-2 rounded-full hover:bg-yellow-300 transition-all duration-200 shadow-md border-2 border-yellow-500 hover:scale-105"
           onClick={() => navigate("/login")}
